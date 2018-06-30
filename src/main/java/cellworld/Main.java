@@ -16,10 +16,10 @@ package cellworld;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Point;
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,21 +27,31 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		CellWorld cellWorld = new CellWorld();
-		PositionedCell lefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new Point(500, 300));
-
-		PositionedCell bottomLefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new Point(800, 700));
-
-		cellWorld.cells = Arrays.asList(lefter, bottomLefter);
-
 		final CellFrame cellFrame = new CellFrame();
-		final CellCanvas cellCanvas = new CellCanvas(cellWorld);
-		cellFrame.add(cellCanvas);
 		Window window = new Window(cellFrame);
 		cellFrame.setSize(window.getToolkit().getScreenSize());
+
+		// PositionedCell lefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new GridPosition(50, 60));
+		// (byte) 0b00011110
+		byte rule = 65; // (byte) 0b00110110; // 0b00011110;
+		PositionedCell rule30 = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(150, 1));
+		// PositionedCell bottomLefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new Point(800, 700));
+		Set<PositionedCell> cells = Collections.singleton(rule30);
+		// Set<PositionedCell> cells = Collections.singleton(lefter);
+		// List<PositionedCell> cells = Arrays.asList(lefter, bottomLefter);
+
+		int worldSizeX = cellFrame.getWidth() / CellWorld.CELL_SIZE;
+		int worldSizeY = cellFrame.getHeight() / CellWorld.CELL_SIZE;
+
+		World cellWorld = new AutomataWorld(rule, worldSizeX, worldSizeY);
+		// World cellWorld = new CellWorld(cells, worldSizeX, worldSizeY);
+
+		final CellCanvas cellCanvas = new CellCanvas(cellWorld);
+		cellFrame.add(cellCanvas);
 		window.setVisible(true);
 		window.toFront();
 
+		Timer timer = new Timer(true);
 		final TimerTask moveWorldForwardTask = new TimerTask(){
 			@Override
 			public void run()
@@ -52,8 +62,14 @@ public class Main
 
 						public void run()
 						{
-							cellWorld.moveForward();
+							System.out.println("Running");
 							cellCanvas.repaint();
+							boolean endOfWorld = cellWorld.moveForward();
+							if(endOfWorld)
+							{
+								timer.cancel();
+								System.out.println("End of world reached");
+							}
 						}
 					});
 				}
@@ -69,6 +85,6 @@ public class Main
 				}
 			}
 		};
-		new Timer(true).scheduleAtFixedRate(moveWorldForwardTask, 0, 100);
+		timer.scheduleAtFixedRate(moveWorldForwardTask, 0, 100);
 	}
 }

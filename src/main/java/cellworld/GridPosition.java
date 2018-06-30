@@ -14,32 +14,40 @@
  */
 package cellworld;
 
-import java.util.Optional;
+import java.util.Objects;
 
-class Lefter extends DefaultCell
+public class GridPosition
 {
-	// boolean previous = false;
-	// private final Color odd;
-	// private final Color even;
+	final int x;
+	final int y;
 
-	Lefter(Cell parent)// , Color odd, Color even)
+	GridPosition(int x, int y)
 	{
-		super(parent);
-		// this.odd = odd;
-		// this.even = even;
+		this.x = x;
+		this.y = y;
 	}
 
 	@Override
-	Optional<? extends Cell> left(GridPosition cellPosition, CellGrid grid)
+	public String toString()
 	{
-		return Optional.of(this);
+		return "[" + x + ":" + y + "]";
 	}
 
-	// @Override
-	// Color color()
-	// {
-	// //previous = !previous;
-	// //return previous ? even : odd;
-	//
-	// }
+	GridPosition move(int dx, int dy)
+	{
+		return new GridPosition(x + dx, y + dy);
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		GridPosition other = (GridPosition) obj;
+		return x == other.x && y == other.y;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(x, y);
+	}
 }

@@ -14,10 +14,12 @@
  */
 package cellworld;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class CellWorld implements World
+public class AutomataWorld implements World
 {
 	private int round = 0;
 	public static int CELL_SIZE = 5;
@@ -26,20 +28,21 @@ public class CellWorld implements World
 	private int sizeY;
 
 	/**
-	 * The most recent position of the currently growing cells
-	 */
-	volatile Set<PositionedCell> cells;
-	/**
 	 * The last cell that was put on a place in the world (memory)
 	 */
 	private final CellGrid grid;
 
-	CellWorld(Set<PositionedCell> cells, int sizeX, int sizeY)
+	List<PositionedCell> cells;
+
+	AutomataWorld(byte rule, int sizeX, int sizeY)
 	{
-		this.cells = cells;
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.grid = new CellGrid(sizeX, sizeY);
+
+		int middle = sizeX / 2;
+		PositionedCell first = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(middle, 0));
+		cells = Collections.singletonList(first);
 		for(PositionedCell cell : cells)
 		{
 			grid.placeOnGrid(cell);
@@ -49,47 +52,19 @@ public class CellWorld implements World
 	public boolean moveForward()
 	{
 		round++;
-		Set<PositionedCell> newCells = new HashSet<PositionedCell>();
-		for(PositionedCell cell : cells)
+		// Grow one left, grow all down, grow one right
+		List<PositionedCell> newCells = new ArrayList<>();
+		PositionedCell model = cells.get(0);
+		for(int i = 0; i < sizeX; i++)
 		{
-			// Don't generate new cells if at the border, TODO: handle inside GridPosition and return Optional
-			if(cell.position.y > 0)
+			GridPosition gridPosition = new GridPosition(i, model.position.y + 1);
+			if(gridPosition.y < sizeY - 1)
 			{
-				GridPosition newPos = cell.position.move(0, -1);
-				cell.cell.top(newPos, grid).ifPresent(top -> {
-					newCells.add(positionedCell(newPos, top));
-				});
-			}
-			if(cell.position.x > 0)
-			{
-				GridPosition newPos = cell.position.move(-1, 0);
-				cell.cell.left(newPos, grid).ifPresent(left -> {
-					newCells.add(positionedCell(newPos, left));
-				});
-			}
-			if(cell.position.x < sizeX - 1)
-			{
-				GridPosition newPos = cell.position.move(1, 0);
-				cell.cell.right(newPos, grid).ifPresent(right -> {
-					newCells.add(positionedCell(newPos, right));
-				});
-			}
-			if(cell.position.y < sizeY - 1)
-			{
-				GridPosition newPos = cell.position.move(0, 1);
-				cell.cell.bottom(newPos, grid).ifPresent(bottom -> {
-					newCells.add(positionedCell(newPos, bottom));
-				});
+				newCells.add(positionedCell(gridPosition, model.cell.left(gridPosition, grid).get()));
 			}
 		}
 		cells = newCells;
 		return newCells.isEmpty();
-	}
-
-	@Override
-	public Iterable<PositionedCell> newCells()
-	{
-		return cells;
 	}
 
 	private PositionedCell positionedCell(GridPosition newPos, Cell cell)
@@ -107,5 +82,11 @@ public class CellWorld implements World
 	public String toString()
 	{
 		return "At round " + round + ":\n" + grid.toString();
+	}
+
+	@Override
+	public Iterable<PositionedCell> newCells()
+	{
+		return cells;
 	}
 }

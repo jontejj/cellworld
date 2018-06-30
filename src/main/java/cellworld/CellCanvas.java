@@ -14,27 +14,29 @@
  */
 package cellworld;
 
+import static cellworld.CellWorld.CELL_SIZE;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
+import java.awt.Point;
 
 class CellCanvas extends Canvas
 {
-	private CellWorld world;
+	private World world;
 
-	public CellCanvas(CellWorld cellWorld)
+	public CellCanvas(World world)
 	{
-		this.world = cellWorld;
+		this.world = world;
 	}
 
 	@Override
 	public void paint(Graphics g)
 	{
-		System.out.println("Painting: " + world.cells);
-		for(PositionedCell cell : world.cells)
+		System.out.println("Painting " + world.round() + ": " + world.newCells());
+		for(PositionedCell cell : world.newCells())
 		{
 			paintCell(cell, g);
 		}
-
 	}
 
 	@Override
@@ -46,7 +48,14 @@ class CellCanvas extends Canvas
 	private void paintCell(PositionedCell cell, Graphics g)
 	{
 		g.setColor(cell.cell.color());
-		g.fillRect(cell.position.x, cell.position.y, CellWorld.CELL_SIZE, CellWorld.CELL_SIZE);
+		Point cellPos = toCanvasPoint(cell.position);
+		g.fillRect(cellPos.x, cellPos.y, CellWorld.CELL_SIZE, CellWorld.CELL_SIZE);
 		// if(currentX >= getToolkit().getScreenSize().getWidth())
 	}
+
+	Point toCanvasPoint(GridPosition gridPos)
+	{
+		return new Point(gridPos.x * CELL_SIZE, gridPos.y * CELL_SIZE);
+	}
+
 }

@@ -14,32 +14,25 @@
  */
 package cellworld;
 
-import java.util.Optional;
+import org.junit.Test;
 
-class Lefter extends DefaultCell
+public class AutomataTest
 {
-	// boolean previous = false;
-	// private final Color odd;
-	// private final Color even;
-
-	Lefter(Cell parent)// , Color odd, Color even)
+	@Test
+	public void testThat() throws Exception
 	{
-		super(parent);
-		// this.odd = odd;
-		// this.even = even;
-	}
+		byte rule = 5;
+		// PositionedCell automata = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(10, 0));
 
-	@Override
-	Optional<? extends Cell> left(GridPosition cellPosition, CellGrid grid)
-	{
-		return Optional.of(this);
+		// CellWorld cellWorld = new CellWorld(Collections.singleton(automata), 100, 20);
+		World world = new AutomataWorld(rule, 100, 20);
+		for(int i = 0; i < 100; i++)
+		{
+			System.out.println(world.toString());
+			if(world.moveForward())
+			{
+				break;
+			}
+		}
 	}
-
-	// @Override
-	// Color color()
-	// {
-	// //previous = !previous;
-	// //return previous ? even : odd;
-	//
-	// }
 }

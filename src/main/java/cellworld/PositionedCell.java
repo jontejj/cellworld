@@ -14,14 +14,14 @@
  */
 package cellworld;
 
-import java.awt.Point;
+import java.util.Objects;
 
 class PositionedCell
 {
-	Point position;
-	Cell cell;
+	final GridPosition position;
+	final Cell cell;
 
-	PositionedCell(Cell cell, Point position)
+	PositionedCell(Cell cell, GridPosition position)
 	{
 		this.cell = cell;
 		this.position = position;
@@ -31,5 +31,31 @@ class PositionedCell
 	public String toString()
 	{
 		return position + ":" + cell;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(position);
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(this == obj)
+			return true;
+		if(obj == null)
+			return false;
+		if(getClass() != obj.getClass())
+			return false;
+		PositionedCell other = (PositionedCell) obj;
+		if(position == null)
+		{
+			if(other.position != null)
+				return false;
+		}
+		else if(!position.equals(other.position))
+			return false;
+		return true;
 	}
 }

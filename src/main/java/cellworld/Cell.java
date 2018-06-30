@@ -38,13 +38,13 @@ abstract class Cell
 		this.strength = parent.strength;
 	}
 
-	abstract Optional<? extends Cell> top();
+	abstract Optional<? extends Cell> top(GridPosition cellPosition, CellGrid grid);
 
-	abstract Optional<? extends Cell> bottom();
+	abstract Optional<? extends Cell> bottom(GridPosition cellPosition, CellGrid grid);
 
-	abstract Optional<? extends Cell> left();
+	abstract Optional<? extends Cell> left(GridPosition cellPosition, CellGrid grid);
 
-	abstract Optional<? extends Cell> right();
+	abstract Optional<? extends Cell> right(GridPosition cellPosition, CellGrid grid);
 
 	Color color()
 	{

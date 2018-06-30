@@ -14,32 +14,11 @@
  */
 package cellworld;
 
-import java.util.Optional;
-
-class Lefter extends DefaultCell
+public interface World
 {
-	// boolean previous = false;
-	// private final Color odd;
-	// private final Color even;
+	Iterable<PositionedCell> newCells();
 
-	Lefter(Cell parent)// , Color odd, Color even)
-	{
-		super(parent);
-		// this.odd = odd;
-		// this.even = even;
-	}
+	boolean moveForward();
 
-	@Override
-	Optional<? extends Cell> left(GridPosition cellPosition, CellGrid grid)
-	{
-		return Optional.of(this);
-	}
-
-	// @Override
-	// Color color()
-	// {
-	// //previous = !previous;
-	// //return previous ? even : odd;
-	//
-	// }
+	int round();
 }

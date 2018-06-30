@@ -39,25 +39,25 @@ class DefaultCell extends Cell
 	}
 
 	@Override
-	Optional<? extends Cell> top()
+	Optional<? extends Cell> top(GridPosition cellPosition, CellGrid grid)
 	{
 		return Optional.empty();
 	}
 
 	@Override
-	Optional<? extends Cell> bottom()
+	Optional<? extends Cell> bottom(GridPosition cellPosition, CellGrid grid)
 	{
 		return Optional.empty();
 	}
 
 	@Override
-	Optional<? extends Cell> left()
+	Optional<? extends Cell> left(GridPosition cellPosition, CellGrid grid)
 	{
 		return Optional.empty();
 	}
 
 	@Override
-	Optional<? extends Cell> right()
+	Optional<? extends Cell> right(GridPosition cellPosition, CellGrid grid)
 	{
 		return Optional.empty();
 	}
