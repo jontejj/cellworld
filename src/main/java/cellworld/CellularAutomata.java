@@ -21,6 +21,8 @@ public class CellularAutomata extends DefaultCell
 {
 	private final byte rule;
 
+	static int risk = 0;
+
 	CellularAutomata(byte rule, Color color, int strength)
 	{
 		super(color, strength);

@@ -32,10 +32,15 @@ class CellCanvas extends Canvas
 	@Override
 	public void paint(Graphics g)
 	{
-		System.out.println("Painting " + world.round() + ": " + world.newCells());
-		for(PositionedCell cell : world.newCells())
+		System.out.println("Painting " + world.round());
+		Iterable<PositionedCell> newCells = world.newCells();
+		while(newCells.iterator().hasNext())
 		{
-			paintCell(cell, g);
+			for(PositionedCell cell : newCells)
+			{
+				paintCell(cell, g);
+			}
+			newCells = world.newCells();
 		}
 	}
 

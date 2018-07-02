@@ -20,7 +20,7 @@ import java.util.Set;
 public class CellWorld implements World
 {
 	private int round = 0;
-	public static int CELL_SIZE = 5;
+	public static int CELL_SIZE = 1;
 
 	private int sizeX;
 	private int sizeY;

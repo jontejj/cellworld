@@ -15,13 +15,9 @@
 package cellworld;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Window;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Main
 {
@@ -33,7 +29,7 @@ public class Main
 
 		// PositionedCell lefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new GridPosition(50, 60));
 		// (byte) 0b00011110
-		byte rule = 65; // (byte) 0b00110110; // 0b00011110;
+		byte rule = (byte) 30; // (byte) 0b00110110; // 0b00011110;
 		PositionedCell rule30 = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(150, 1));
 		// PositionedCell bottomLefter = new PositionedCell(new Lefter(new DefaultCell(Color.BLACK, 1)), new Point(800, 700));
 		Set<PositionedCell> cells = Collections.singleton(rule30);
@@ -48,43 +44,16 @@ public class Main
 
 		final CellCanvas cellCanvas = new CellCanvas(cellWorld);
 		cellFrame.add(cellCanvas);
-		window.setVisible(true);
-		window.toFront();
+		// window.setVisible(true);
+		// window.toFront();
 
-		Timer timer = new Timer(true);
-		final TimerTask moveWorldForwardTask = new TimerTask(){
-			@Override
-			public void run()
-			{
-				try
-				{
-					EventQueue.invokeAndWait(new Runnable(){
-
-						public void run()
-						{
-							System.out.println("Running");
-							cellCanvas.repaint();
-							boolean endOfWorld = cellWorld.moveForward();
-							if(endOfWorld)
-							{
-								timer.cancel();
-								System.out.println("End of world reached");
-							}
-						}
-					});
-				}
-				catch(InvocationTargetException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch(InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-		timer.scheduleAtFixedRate(moveWorldForwardTask, 0, 100);
+		boolean endOfWorld = false;
+		while(!endOfWorld)
+		{
+			cellCanvas.repaint();
+			System.out.println("Running");
+			endOfWorld = cellWorld.moveForward();
+		}
+		System.out.println("End of world reached");
 	}
 }

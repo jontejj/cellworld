@@ -17,12 +17,14 @@ package cellworld;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class AutomataWorld implements World
 {
 	private int round = 0;
-	public static int CELL_SIZE = 5;
+	public static int CELL_SIZE = 1;
 
 	private int sizeX;
 	private int sizeY;
@@ -32,7 +34,9 @@ public class AutomataWorld implements World
 	 */
 	private final CellGrid grid;
 
-	List<PositionedCell> cells;
+	Deque<List<PositionedCell>> cells;
+
+	PositionedCell model;
 
 	AutomataWorld(byte rule, int sizeX, int sizeY)
 	{
@@ -41,9 +45,10 @@ public class AutomataWorld implements World
 		this.grid = new CellGrid(sizeX, sizeY);
 
 		int middle = sizeX / 2;
-		PositionedCell first = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(middle, 0));
-		cells = Collections.singletonList(first);
-		for(PositionedCell cell : cells)
+		model = new PositionedCell(new CellularAutomata(rule, Color.BLACK, 1), new GridPosition(middle, 0));
+		cells = new LinkedBlockingDeque<>();
+		cells.push(Collections.singletonList(model));
+		for(PositionedCell cell : cells.peek())
 		{
 			grid.placeOnGrid(cell);
 		}
@@ -54,16 +59,18 @@ public class AutomataWorld implements World
 		round++;
 		// Grow one left, grow all down, grow one right
 		List<PositionedCell> newCells = new ArrayList<>();
-		PositionedCell model = cells.get(0);
+		PositionedCell latest = null;
 		for(int i = 0; i < sizeX; i++)
 		{
 			GridPosition gridPosition = new GridPosition(i, model.position.y + 1);
 			if(gridPosition.y < sizeY - 1)
 			{
-				newCells.add(positionedCell(gridPosition, model.cell.left(gridPosition, grid).get()));
+				latest = positionedCell(gridPosition, model.cell.left(gridPosition, grid).get());
+				newCells.add(latest);
 			}
 		}
-		cells = newCells;
+		model = latest;
+		cells.addLast(newCells);
 		return newCells.isEmpty();
 	}
 
@@ -87,6 +94,8 @@ public class AutomataWorld implements World
 	@Override
 	public Iterable<PositionedCell> newCells()
 	{
-		return cells;
+		if(cells.isEmpty())
+			return Collections.emptyList();
+		return cells.pop();
 	}
 }
